@@ -9,12 +9,24 @@ public class Player : MonoBehaviour
     public bool touchingPlatform;
     private Animator anim;
     bool isJumping;
+    bool attackReady;
+    PlayerScript playerScript;
+    public Transform attackpoint;
+    public int attackDamage = 20;
+    public float attackRange = 1f;
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         touchingPlatform = false;
         anim = GetComponent<Animator>();
+        {
+
+            playerScript = GetComponent<Player>();
+            attackReady = false;
+
+
+        }
     }
 
     // Update is called once per frame
@@ -40,22 +52,26 @@ public class Player : MonoBehaviour
             {
                 vel.y = -20;
             }
-            if (Input.GetKey(KeyCode.A))
+            if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
             {
                 //rb.velocity = new Vector2(-10, 0);
                 vel.x = -20;
                 anim.SetBool("walk", true);
             }
-            if (Input.GetKey(KeyCode.D))
+            if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
             {
                 //rb.velocity = new Vector2(10, 0);
                 vel.x = 20;
                 anim.SetBool("walk", true);
             }
-            if (Input.GetKeyDown(KeyCode.E))
+            if (Input.GetKey(KeyCode.E) || Input.GetMouseButtonDown(0))
             {
 
                 anim.SetBool("Attack", true);
+            }
+            else
+            {
+                anim.SetBool("Attack", false);
             }
 
             rb.velocity = vel;
@@ -96,5 +112,21 @@ public class Player : MonoBehaviour
         }
     }
 
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag == "Collectible")
+        {
+            Destroy(collision.gameObject);
+        }
+    }
+
+    public void StartOfAttack()
+    {
+        attackReady = true;
+    }
+    public void EndOfAttack()
+    {
+        attackReady = false;
+    }
 }
 
